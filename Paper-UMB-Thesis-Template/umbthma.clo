@@ -30,12 +30,28 @@
 \newcommand{\authortitles}[1]{\def\@authortitles{#1}}
 \newcommand{\titlesize}[1]{\def\@titlesize{#1}}
 
+% The following commands set the program name.
+
+\newif\if@program
+\newcommand{\program}[1]{\def\@program{#1}\@programtrue}
+\newcommand{\noprogram}{\@programfalse}
+\program{NO PROGRAM!?!}
+\noprogram
+
 % The following commands set the department name.
 
 \newif\if@department
 \newcommand{\department}[1]{\def\@department{#1}\@departmenttrue}
 \newcommand{\nodepartment}{\@departmentfalse}
 \department{NO DEPARTMENT!?!}
+\nodepartment
+
+% The following commands set the college name.
+
+\newif\if@college
+\newcommand{\college}[1]{\def\@college{#1}\@collegetrue}
+\newcommand{\nocollege}{\@collegefalse}
+\college{NO COLLEGE}
 
 % The following commands will process the "MA", "MS", "PhD", or "EdD"
 % option.  (The default is "PhD".)

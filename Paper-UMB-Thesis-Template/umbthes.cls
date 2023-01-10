@@ -508,8 +508,9 @@
 \newcommand{\tocBigSkipLen}{2.7ex plus 0.5ex minus 0.2ex}
 
 \newcommand*{\l@chapter}{\vspace{\tocBigSkipLen}% 2011.07.25 DW: change from bigskip to vspace w/param'ed size
-                         \@dottedtocline{1}{0.5in}{1.75em}}
-\newcommand*{\l@section}{\@dottedtocline{2}{1in}{0em}}
+                          % 2023.01.10 AA: new format update
+                         \@dottedtocline{1}{0.4in}{1.75em}}
+\newcommand*{\l@section}{\@dottedtocline{2}{0.8in}{2.50em}}
 \newcommand*{\l@subsection}{\@dottedtocline{3}{1.5in}{0em}}
 \newcommand*{\l@subsubsection}{\@dottedtocline{4}{2in}{0em}}
 \newcommand*{\l@paragraph}{\relax}
@@ -532,7 +533,7 @@
 
 \newcommand{\contentsname}{Table of Contents}
 \newcommand{\tableofcontents}{%
-    \toc@limit@numberingtrue%
+    \toc@limit@numberingfalse%
     \chapter*{\MakeUppercase\contentsname}%
         \@mkboth{%
            \MakeUppercase\contentsname}{\MakeUppercase\contentsname}%
@@ -576,23 +577,29 @@
 
 % Counting dots requires recursion, and delimited macros.
 %
+
+% Argenis: Feedback from editor (Carol) specifies to use numbering for
+%          chapter sections. I have set @limit@numbering to false and
+%          adjusted left spacing for titles
+
 \newcounter{dot@token@counter}
 \newif\iftoc@limit@numbering
 
+% \toc@limit@numberingtrue
 \toc@limit@numberingfalse
 \def\@countdottokens#1{%
-   \@countdottokenssub#1.x%
+  \@countdottokenssub#1.x%
 }
 
 \def\@countdottokenssub#1.#2x{%
-  %\typeout{A=#1, B=#2}%
+%   \typeout{A=#1, B=#2}%
   \def\@tmpfirst{#1}%
   \def\@blank{}%
   \ifx\@tmpfirst\@blank%
 	\else%
         \addtocounter{dot@token@counter}{1}%
 	\@countdottokens{#2}%
-   \fi%
+  \fi%
 }
 
 \def\countdottokens#1{%

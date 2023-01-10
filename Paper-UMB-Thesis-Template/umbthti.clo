@@ -80,7 +80,7 @@
          \vfill
          A \@Thesisname\ Presented \\
          by \\
-	 \@author \\
+	 \MakeUppercase{\@author} \\
          \vfill
          \renewcommand\baselinestretch{\@singlespacing}\@normalsize
          Submitted to the Office of Graduate Studies, University of Massachusetts \\
@@ -89,7 +89,11 @@
          \renewcommand\baselinestretch{\@doublespacing}\@normalsize
          \@degreename \\
          \@degreemonth\ \@degreeyear \\
-         \@department\ Program\\
+         \if@program
+            \@program\ Program\\
+         \else
+            \@department\ Program\\
+        \fi
       \end {center}
       \ColumnRestore
    \end {titlepage}
@@ -115,6 +119,7 @@
    \vfill
    \if@copyright
       \begin{center}
+      \renewcommand\baselinestretch{\@singlespacing}\@normalsize
 	 \copyright\ \@copyrightyear\ by\ \@author \\
          \@copyrightinfo
       \end{center}
@@ -172,6 +177,10 @@
    \def\@deptchair{#1}
 }
 
+\newcommand\colldean[1]{
+   \def\@colldean{#1}
+}
+
 % The following definition for "\@signatureline" draws a line and puts
 % a name underneath the line.
 
@@ -188,21 +197,39 @@
 
 \newcommand\@signaturedirector[1]{
    \begin {flushright}
-       \rule{4in}{0.01in} \vskip-15pt
+       \rule{4in}{0.01in}
    \end {flushright}
    \begin {flushleft}
-       \hspace{1.735in} {#1},\ Program Director \\
-       \hspace{1.735in} \@department\ Program \\
+   \vskip-15pt
+        \if@program
+            \hspace{2.25in} {#1},\ Program Director \\
+            \hspace{2.25in} \@program\ Program \\
+        \else
+            \hspace{2.25in} {#1},\ Program Director \\
+            \hspace{2.25in} \@department\ Program \\
+       \fi
    \end {flushleft}
 }
 
 \newcommand\@signaturedeptchair[1]{
    \begin {flushright}
-       \rule{4in}{0.01in} \vskip-15pt
+       \rule{4in}{0.01in}
    \end {flushright}
    \begin {flushleft}
-       \hspace{1.735in} {#1},\ Chairperson \\
-       \hspace{1.735in} \@department\ Department \\
+    \vskip-15pt
+        \hspace{2.25in} {#1},\ Chair \\
+        \hspace{2.25in} \@department\ Department \\
+   \end {flushleft}
+}
+
+\newcommand\@signaturecolldean[1]{
+   \begin {flushright}
+       \rule{4in}{0.01in}
+   \end {flushright}
+   \begin {flushleft}
+    \vskip-15pt
+        \hspace{2.25in} {#1},\ Dean \\
+        \hspace{2.25in} \@college \\
    \end {flushleft}
 }
 
@@ -212,16 +239,17 @@
    \renewcommand\baselinestretch{\@doublespacing}\@normalsize
    \begin{center}
       \MakeUppercase{\@title} \\
-      \vskip 48pt plus0pt minus6pt
+      \vskip 2em plus0pt minus6pt
       A \@Thesisname\ Presented \\
       by \\
-      \@author \\
-      \vskip 48pt plus0pt minus6pt
+      \MakeUppercase{\@author} \\
+      \vskip 2em plus0pt minus6pt
+      Approved as to style and content by:
    \end{center}
    \renewcommand\baselinestretch{\@singlespacing}\@normalsize
    \begin {flushleft}
-      Approved as to style and content by:
-      \vskip 24pt plus0pt minus24pt
+      
+      \vskip 48pt plus0pt minus24pt
       \ifnum\c@chairs>2
          \@signatureline{\@chairA}{\@chairtitleA\\Committee Co-chair}
          \@signatureline{\@chairB}{\@chairtitleB\\Committee Co-chair}
@@ -230,7 +258,7 @@
          \@signatureline{\@chairA}{\@chairtitleA\\Committee Co-chair}
          \@signatureline{\@chairB}{\@chairtitleB\\Committee Co-chair}
       \else\ifnum\c@chairs>0
-         \@signatureline{\@chairA}{\@chairtitleA\\Chairperson of Committee}
+         \@signatureline{\@chairA}{\@chairtitleA\\Chairperson of the Committee}
       \else\typeout{No committee chair.}
       \fi\fi\fi
       \ifnum\c@members>0 \@signatureline{\@memberA}{\@membertitleA\\Member}
@@ -243,10 +271,23 @@
    \end {flushleft}
    \vfill
    \@signaturedirector{\@director}
-   \@signaturedeptchair{\@deptchair}
+   \if@department
+        \@signaturedeptchair{\@deptchair}
+    \else
+        \@signaturecolldean{\@colldean}
+    \fi
    \ColumnRestore
    \renewcommand\baselinestretch{\@spacing}\@normalsize
 }
+
+% \newcommand\@signedsignaturepage[1]{
+%     \def\@signedsignaturepage{#1}
+% }
+\newif\if@signedsignaturepage
+\newcommand{\signedsignaturepage}[1]{\def\@signedsignaturepage{#1}\@signedsignaturepagetrue}
+\newcommand{\nosignedsignaturepage}{\@signedsignaturepagefalse}
+\signedsignaturepage{no_signed_signature_page}
+\nosignedsignaturepage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %								       %
@@ -326,9 +367,10 @@
       \ColumnSave
       \par\pagestyle{plain}
       \renewcommand\baselinestretch{\@spacing}\@normalsize\normalfont
-      \vspace*{0pt}		% force spacing at top of page
-      \vfill
       \begin{center}
+    %   \vspace{0pt}		% force spacing at top of page
+      \textsc{\large DEDICATION}
+      \vfill
 	 \@dedication
       \end{center}
       \vfill
@@ -571,7 +613,11 @@
     \pagebreak   % the back side of the title page
   \fi
   \@makecopyrightpage
-  \@makesignaturepage
+  \if@signedsignaturepage
+    \includepdf{\@signedsignaturepage}
+  \else
+      \@makesignaturepage
+  \fi
   \@makeabstractpage{\@doublespacing}
   \@makededication
   \@makeacknowledgments
